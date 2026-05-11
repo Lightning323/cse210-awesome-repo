@@ -28,9 +28,14 @@ class Program
                         while (true)
                         {
                             string line = Console.ReadLine();
-                            if (line != null) entry.Response += line;
-                            else break;
+                            if (line != null) entry.Response += line + "\n";
+                            else
+                            {
+                                entry.Response = entry.Response.TrimEnd('\n').Trim();
+                                break;
+                            }
                         }
+
                         Console.WriteLine($"Entry saved on {entry.Date}");
 
                         break;
