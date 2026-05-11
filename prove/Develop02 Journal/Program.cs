@@ -14,10 +14,8 @@ class Program
         while (continueLoop)
         {
             PrintOptions();
-            Console.Write("Select an option: ");
             if (int.TryParse(Console.ReadLine(), out var result))
             {
-                Console.WriteLine();
                 switch (result)
                 {
                     case 1: //Write
@@ -69,10 +67,6 @@ class Program
 
     static void PrintOptions()
     {
-        Console.WriteLine("1. Write");
-        Console.WriteLine("2. Display");
-        Console.WriteLine("3. Load");
-        Console.WriteLine("4. Save");
-        Console.WriteLine("5. Quit");
+        Console.Write("Select an option. (1. Write, 2. Display, 3. Load, 4. Save, 5. Quit):");
     }
 }
