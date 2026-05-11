@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning05", "prepare\Learn
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "prove", "prove", "{D3BA622E-FCA6-41E6-B200-7CBA93CCF9BD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Develop02", "prove\Develop02\Develop02.csproj", "{270272F2-4810-48C0-864E-9367B69122BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Develop02 Journal", "prove\Develop02 Journal\Develop02 Journal.csproj", "{270272F2-4810-48C0-864E-9367B69122BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Develop03", "prove\Develop03\Develop03.csproj", "{4575D340-16D4-4445-8D3F-CA42810A4952}"
 EndProject
