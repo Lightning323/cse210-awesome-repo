@@ -5,6 +5,11 @@ public class Journal
     private string _name;
     protected internal List<Entry> _entries;
 
+    public Journal()
+    {
+        _entries = new List<Entry>();
+    }
+
     public void AddEntry(Entry entry)
     {
         _entries.Add(entry);
@@ -12,9 +17,16 @@ public class Journal
 
     public void DisplayEntries()
     {
-        foreach (var entry in _entries)
+        if (_entries.Count() == 0)
         {
-            Console.WriteLine(entry.ToString());
+            Console.WriteLine("Nothing to see here!");
+        }
+        else
+        {
+            foreach (var entry in _entries)
+            {
+               entry.Display();
+            }
         }
     }
 }

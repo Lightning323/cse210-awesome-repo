@@ -8,10 +8,10 @@ public class SaveHandler
     {
         Console.WriteLine($"Saving to {savePath}");
         Directory.CreateDirectory(savePath);
-        // foreach (var entry in journal._entries)
-        // {
-        //     entry.Display();
-        // }
+        foreach (var entry in journal._entries)
+        {
+            File.WriteAllText(entry.Date, entry.Prompt + "\n" + entry.Response);
+        }
     }
 
     public static Journal load()

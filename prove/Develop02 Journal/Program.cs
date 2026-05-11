@@ -5,9 +5,10 @@ using System;
 class Program
 {
     static private Journal journal;
-    
+
     static void Main(string[] args)
     {
+        journal = new Journal();
         bool continueLoop = true;
         Console.WriteLine("CSE210 Journal.");
         while (continueLoop)
@@ -16,25 +17,26 @@ class Program
             Console.Write("Select an option: ");
             if (int.TryParse(Console.ReadLine(), out var result))
             {
+                Console.WriteLine();
                 switch (result)
                 {
                     case 1: //Write
+                        journal.AddEntry(new Entry());
+                        break;
+                    case 2: //Display
+                        journal.DisplayEntries();
+                        break;
+                    case 3: //Load
+                        journal = SaveHandler.load();
+                        break;
+                    case 4: //Save
                         SaveHandler.save(journal);
                         break;
-                    case 2:
-                        Console.WriteLine(result);
-                        break;
-                    case 3:
-                        Console.WriteLine(result);
-                        break;
-                    case 4:
-                        Console.WriteLine(result);
-                        break;
-                    case 5:
+                    case 5: //Quit
                         Console.WriteLine("Goodbye");
                         continueLoop = false;
                         break;
-                    default:
+                    default: //Invalid
                         Console.WriteLine("Invalid Input");
                         break;
                 }
@@ -43,6 +45,7 @@ class Program
             {
                 Console.WriteLine("Invalid Input");
             }
+
             Console.WriteLine("");
         }
     }
