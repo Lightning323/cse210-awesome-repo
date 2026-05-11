@@ -21,7 +21,18 @@ class Program
                 switch (result)
                 {
                     case 1: //Write
-                        journal.AddEntry(new Entry());
+                        Entry entry = new Entry();
+                        journal.AddEntry(entry);
+                        Console.WriteLine($"New entry on {entry.Date}; prompt: \"{entry.Prompt}\"\n" +
+                                          $"Enter your reponse here, type Ctrl+D on a new line when finished:\n");
+                        while (true)
+                        {
+                            string line = Console.ReadLine();
+                            if (line != null) entry.Response += line;
+                            else break;
+                        }
+                        Console.WriteLine($"Entry saved on {entry.Date}");
+
                         break;
                     case 2: //Display
                         journal.DisplayEntries();

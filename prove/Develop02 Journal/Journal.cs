@@ -23,6 +23,7 @@ public class Journal
         }
         else
         {
+            Console.WriteLine($"{_entries.Count()} Journal entries:");
             foreach (var entry in _entries)
             {
                entry.Display();

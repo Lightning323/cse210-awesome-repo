@@ -37,7 +37,9 @@ public class Entry
     
     public void Display()
     {
-        Console.WriteLine($"Entry on " + Date + ":\nprompt: \"" + Prompt+"\"\n\""+Response+"\"");
+        Console.WriteLine($"- Entry on " + Date + ":\n" +
+                          "\tprompt: \"" + Prompt+"\"\n" +
+                          "\t\""+Response+"\"");
     }
     
     
