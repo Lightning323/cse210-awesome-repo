@@ -21,20 +21,20 @@ class Program
                     case 1: //Write
                         Entry entry = new Entry();
                         journal.AddEntry(entry);
-                        Console.WriteLine($"New entry on {entry.Date}; prompt: \"{entry.Prompt}\"\n" +
+                        Console.WriteLine($"New entry on {entry._date}; prompt: \"{entry._prompt}\"\n" +
                                           $"Enter your reponse here, type Ctrl+D on a new line when finished:\n");
                         while (true)
                         {
                             string line = Console.ReadLine();
-                            if (line != null) entry.Response += line + "\n";
+                            if (line != null) entry._response += line + "\n";
                             else
                             {
-                                entry.Response = entry.Response.TrimEnd('\n').Trim();
+                                entry._response = entry._response.TrimEnd('\n').Trim();
                                 break;
                             }
                         }
 
-                        Console.WriteLine($"Entry saved on {entry.Date}");
+                        Console.WriteLine($"Entry saved on {entry._date}");
 
                         break;
                     case 2: //Display

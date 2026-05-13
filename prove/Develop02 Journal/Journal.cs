@@ -2,12 +2,12 @@ namespace Journal;
 
 public class Journal
 {
-    public string Name { get; set; }
+    public string _name;
     protected internal List<Entry> _entries;
 
     public Journal()
     {
-        Name = Environment.UserName;
+        _name = Environment.UserName;
         _entries = new List<Entry>();
     }
 
@@ -24,7 +24,7 @@ public class Journal
         }
         else
         {
-            Console.WriteLine($"{_entries.Count()} Journal entries for {Name}:");
+            Console.WriteLine($"{_entries.Count()} Journal entries for {_name}:");
             foreach (var entry in _entries)
             {
                 entry.Display();

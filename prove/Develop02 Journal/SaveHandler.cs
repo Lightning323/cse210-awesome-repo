@@ -13,9 +13,9 @@ public class SaveHandler
         foreach (var entry in journal._entries)
         {
             //Save the file using the date as the filename
-            string fileName = $"entry-{entry.Date}.txt";
+            string fileName = $"entry-{entry._date}.txt";
             //A prompt MUST ALWAYS be a single line! The rest of the file is the response
-            string fileContents = entry.Prompt + "\n" + entry.Response;
+            string fileContents = entry._prompt + "\n" + entry._response;
             string fullPath = Path.Combine(savePath, fileName);
             File.WriteAllText(fullPath, fileContents);
         }
@@ -49,3 +49,4 @@ public class SaveHandler
         return journal;
     }
 }
+
