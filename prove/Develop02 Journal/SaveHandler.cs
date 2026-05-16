@@ -4,44 +4,38 @@ using System;
 
 public class SaveHandler
 {
-    private static string savePath = Path.Combine(Environment.CurrentDirectory, "journal");
+    private static string saveFile = Path.Combine(Environment.CurrentDirectory, "journal.csv");
 
     public static void save(Journal journal)
     {
-        Console.WriteLine($"Saving {journal._entries.Count()} entries to {savePath}...");
-        Directory.CreateDirectory(savePath);
+        Console.WriteLine($"Saving {journal._entries.Count()} entries to {saveFile}...");
+        string fileContents = "";
         foreach (var entry in journal._entries)
         {
-            //Save the file using the date as the filename
-            string fileName = $"entry-{entry._date}.txt";
-            //A prompt MUST ALWAYS be a single line! The rest of the file is the response
-            string fileContents = entry._prompt + "\n" + entry._response;
-            string fullPath = Path.Combine(savePath, fileName);
-            File.WriteAllText(fullPath, fileContents);
+            fileContents += entry._date +
+                            "|" + entry._prompt.Replace("|", "").Replace("\n", "\\n") +
+                            "|" + entry._response.Replace("|", "").Replace("\n", "\\n") + "\n";
         }
+
+        File.WriteAllText(saveFile, fileContents);
     }
 
     public static Journal load()
     {
         Journal journal = new Journal();
         Console.WriteLine($"Loading entries...");
-
-        if (Directory.Exists(savePath))
+        if (File.Exists(saveFile))
         {
-            foreach (string file in Directory.GetFiles(savePath))
+            string text = File.ReadAllText(saveFile);
+            foreach (string row in text.Split("\n"))
             {
-                //Extract the date from the file extension
-                string date = Path.GetFileNameWithoutExtension(file);
-                string text = File.ReadAllText(file);
-                //Where is the first newline break?
-                int newlineIndex = text.IndexOf("\n");
-                if (newlineIndex != -1)
+                string[] columns = row.Split("|");
+                if (columns.Length == 3)
                 {
-                    //Prompt is on the first line
-                    string prompt = text.Substring(0, newlineIndex);
-                    //Response is the rest of the file
-                    string response = text.Substring(newlineIndex + 1);
-                    journal._entries.Add(new Entry(date, prompt, response));
+                    journal._entries.Add(new Entry(
+                        columns[0],
+                        columns[1].Replace("\\n", "\n"),
+                        columns[2].Replace("\\n", "\n")));
                 }
             }
         }
@@ -49,4 +43,3 @@ public class SaveHandler
         return journal;
     }
 }
-

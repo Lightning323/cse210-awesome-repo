@@ -46,8 +46,7 @@ public class Entry
 
     public void Display()
     {
-        Console.WriteLine($"- Entry on " + _date + ":\n" +
-                          "\tprompt: \"" + _prompt + "\"\n" +
-                          "\t\"" + _response + "\"");
+        Console.WriteLine($"\n(" + _date + "): Prompt: \"" + _prompt + "\"\n" +
+                          "Response: \"" + _response + "\"");
     }
 }
