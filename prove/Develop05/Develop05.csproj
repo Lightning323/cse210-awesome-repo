@@ -6,6 +6,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <RootNamespace>Develop03</RootNamespace>
   </PropertyGroup>
 
 </Project>
