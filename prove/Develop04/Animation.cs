@@ -88,7 +88,9 @@ public class Animation
 
         for (int j = 0; j < lines.Length; j += skipNthLine)
         {
-            Console.WriteLine(lines[j]);
+            string line = lines[j];
+           // line =  line.Replace(" ", "█").Replace("░", "▓").Replace("▓", "░").Replace("█", " ");
+            Console.WriteLine(line);
         }
         Thread.Sleep(_frameMS);
     }
