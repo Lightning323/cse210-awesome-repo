@@ -23,8 +23,7 @@ public abstract class Exercise
 
     public void start(int timeSeconds)
     {
-        Console.WriteLine("Get ready...");
-        AnimationLibrary.ANIMATION_RICKROLL.Play(3, "Get ready...",false);
+        AnimationLibrary.ANIMATION_RICKROLL.Play(5, "Get ready...",false);
     }
 
     protected void endDisplay(long elapsedTime)
