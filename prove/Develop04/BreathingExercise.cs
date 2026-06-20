@@ -17,19 +17,20 @@ public class BreathingExercise : Exercise
         const int breatheIn = 5;
         const int breatheOut = 5;
         const int hold = 5;
-        int iterations = Math.Max(1, timeSeconds / (breatheIn + breatheOut + hold));
+        int iterations = Math.Max(1, timeSeconds / (breatheIn + breatheOut + hold + hold));
 
         for (int i = 0; i < iterations; i++)
         {
             AnimationLibrary.ANIMATION_RICKROLL_3.Play(breatheIn, $"Breathing in ({i + 1} / {iterations})...", true);
             AnimationLibrary.ANIMATION_RICKROLL_3.Play(hold, $"Hold your breath ({i + 1} / {iterations})...", true);
             AnimationLibrary.ANIMATION_RICKROLL_3.Play(breatheOut, $"Breathing out ({i + 1} / {iterations})...", true);
+            AnimationLibrary.ANIMATION_RICKROLL_3.Play(hold, $"Hold your breath ({i + 1} / {iterations})...", true);
 
             int countdownSeconds = (int)(endTime - DateTime.Now).TotalSeconds;
             if (countdownSeconds <= 0) break;
         }
 
-        base.endDisplay("You did it. Great job!",timeSeconds);
+        base.endDisplay("You did it. Great job!", timeSeconds);
     }
 
     // endDisplay(timeSeconds);

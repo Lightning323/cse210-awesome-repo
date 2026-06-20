@@ -48,7 +48,7 @@ public class ReflectionExercise : Exercise
             AnimationLibrary.ANIMATION_RICKROLL_3.Play(
                 QUESTION_TIME,
                 "PROMPT: \"" + prompt + "\"\n" +
-                $"QUESTION {i}/{iterations}: \"{question}\"",
+                $"QUESTION {i+1}/{iterations}: \"{question}\"",
                 true);
         }
         base.endDisplay("You did it. Great job!", timeSeconds);

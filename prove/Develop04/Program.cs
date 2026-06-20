@@ -13,20 +13,22 @@ class Program
     {
         string[] decorations = new string[]
         {
-            "*-*-*-*-*-*-*-*-*-*-*-*-",
-            "⟾ ⟽ ⟾ ⟽ ⟾ ⟽ ⟾ ⟽ ⟾ ⟽ ⟾",
-            "========================",
-            "🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷",
-            "<><><><><><><><><><><><>",
-            "@|@|@|@|@|@|@|@|@|@|@|@",
-            " ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪"
+                "⊱ ────── {.⋅ ✯ ⋅.} ────── ⊰",
+                "◈ ━━━━━━━ ⸙ ━━━━━━━ ◈",
+                "■■■■■■■■■■■■■■■■■■■■■■■■",
+                "◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇",
+                "—— — — — — — — — — — — ——",
+                "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓"
         };
         Random random = new Random();
         while (true)
         {
             Console.Clear();
             string decoration = decorations[random.Next(decorations.Length)];
-            Console.WriteLine($"\n\n{decoration}\nRELAXATION TIMER\n{decoration}" +
+            Console.WriteLine($"\n\n" +
+                              $"\u001b[33m{decoration}\u001b[0m\n" +
+                              $"\u001b[34mRELAXATION TIMER\u001b[0m\n" +
+                              $"\u001b[33m{decoration}\u001b[0m" +
                               "\nChoose an activity to perform, or press Q to quit:" +
                               "\n1. Breathing exercise" +
                               "\n2. Listing exercise" +

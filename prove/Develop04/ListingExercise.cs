@@ -26,7 +26,7 @@ public class ListingExercise : Exercise
         Random random = new Random();
         int promptIndex = random.Next(_prompts.Count);
         string prompt = _prompts[promptIndex];
-        AnimationLibrary.ANIMATION_RICKROLL_3.Play(20,
+        AnimationLibrary.ANIMATION_RICKROLL_3.Play(15,
             "PROMPT: \"" + prompt + "\"",
             true);
 
@@ -35,10 +35,11 @@ public class ListingExercise : Exercise
         {
             int countdownSeconds = (int)(endTime - DateTime.Now).TotalSeconds;
             if (countdownSeconds <= 0) break;
-            Console.Write($"{_listCount+1}. ");
-            Console.ReadLine();
-            _listCount++;
+            Console.Write($"{_listCount + 1}. ");
+            string o = Console.ReadLine();
+            if (!o.Trim().Equals("")) _listCount++;
         }
+
         base.endDisplay("Congratulations! You listed " + _listCount + " items.", timeSeconds);
     }
 }

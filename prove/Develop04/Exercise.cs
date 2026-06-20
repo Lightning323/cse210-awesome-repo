@@ -28,9 +28,8 @@ public abstract class Exercise
 
     protected void endDisplay(string message, long elapsedTime)
     {
-        Thread.Sleep(750);
+        Thread.Sleep(1000);
         Console.WriteLine(message + "\nPress any key to continue...");
         Console.Read();
-        Thread.Sleep(1000);
     }
 }

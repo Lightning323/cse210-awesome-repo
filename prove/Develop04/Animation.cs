@@ -112,6 +112,6 @@ public class Animation
         int filledLength = (int)(fraction * n);
         string filled = new string('█', filledLength);
         string empty = new string('_', n - filledLength);
-        Console.WriteLine($"|{filled}{empty}|");
+        Console.WriteLine($"\u001b[34m|{filled}{empty}|\u001b[0m");
     }
 }
