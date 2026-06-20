@@ -23,14 +23,14 @@ public abstract class Exercise
 
     public void start(String desc, int timeSeconds)
     {
-   
-        AnimationLibrary.ANIMATION_RICKROLL.Play(timeSeconds, desc,false);
+        AnimationLibrary.ANIMATION_RICKROLL.Play(timeSeconds, desc, false);
     }
 
-    protected void endDisplay(long elapsedTime)
+    protected void endDisplay(string message, long elapsedTime)
     {
-        Thread.Sleep(500);
-        Console.WriteLine("You did it. Great job!");
-        Thread.Sleep(2500);
+        Thread.Sleep(750);
+        Console.WriteLine(message + "\nPress any key to continue...");
+        Console.Read();
+        Thread.Sleep(1000);
     }
 }

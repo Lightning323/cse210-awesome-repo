@@ -29,7 +29,7 @@ public class BreathingExercise : Exercise
             if (countdownSeconds <= 0) break;
         }
 
-        base.endDisplay(timeSeconds);
+        base.endDisplay("You did it. Great job!",timeSeconds);
     }
 
     // endDisplay(timeSeconds);

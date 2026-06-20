@@ -51,5 +51,6 @@ public class ReflectionExercise : Exercise
                 $"QUESTION {i}/{iterations}: \"{question}\"",
                 true);
         }
+        base.endDisplay("You did it. Great job!", timeSeconds);
     }
 }
