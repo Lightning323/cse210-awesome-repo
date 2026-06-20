@@ -21,9 +21,10 @@ public abstract class Exercise
         return _description;
     }
 
-    public void start(int timeSeconds)
+    public void start(String desc, int timeSeconds)
     {
-        AnimationLibrary.ANIMATION_RICKROLL.Play(5, "Get ready...",false);
+   
+        AnimationLibrary.ANIMATION_RICKROLL.Play(timeSeconds, desc,false);
     }
 
     protected void endDisplay(long elapsedTime)

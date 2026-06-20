@@ -16,6 +16,7 @@ public class Animation
         _frameMS = frameMS;
         _pingPong = pingPong;
     }
+
     public Animation(string[] animation, bool pingPong, int frameMS)
     {
         _animation = animation;
@@ -23,7 +24,7 @@ public class Animation
         _frameMS = frameMS;
         _pingPong = pingPong;
     }
-    
+
     public Animation(string[] animation, bool pingPong)
     {
         _animation = animation;
@@ -49,7 +50,8 @@ public class Animation
                     return;
                 }
 
-                drawFrame(cursorPosition, _animation[f], message, timeLeftMS, seconds * 1000, showProgressBar,_skipNthLine);
+                drawFrame(cursorPosition, _animation[f], message, timeLeftMS, seconds * 1000, showProgressBar,
+                    _skipNthLine);
             }
 
             if (_pingPong && _animation.Length > 2)
@@ -62,21 +64,20 @@ public class Animation
                         return;
                     }
 
-                    drawFrame(cursorPosition, _animation[f], message, timeLeftMS, seconds * 1000, showProgressBar,_skipNthLine);
+                    drawFrame(cursorPosition, _animation[f], message, timeLeftMS, seconds * 1000, showProgressBar,
+                        _skipNthLine);
                 }
             }
         }
     }
 
-    private void drawFrame((int Left, int Top) cursorPosition, String frame, String topbar,
+    private void drawFrame((int Left, int Top) cursorPosition, String frame, String message,
         int timeLeftMS, int totalMS,
         bool showProgressBar, int skipNthLine)
     {
         Console.SetCursorPosition(cursorPosition.Left, cursorPosition.Top);
         string[] lines = frame.Split("\n");
 
-        int pad = lines[0].Length - topbar.Length;
-        if (pad > 0) topbar = topbar.PadRight(pad);
 
         if (showProgressBar)
         {
@@ -84,14 +85,24 @@ public class Animation
             Console.Write(countdownTimer);
             DrawProgressBar(timeLeftMS, totalMS, Math.Max(5, lines[0].Length - 1 - countdownTimer.Length));
         }
-        Console.WriteLine(topbar);
+
+        if (message != null)
+        {
+            foreach (string messageLine in message.Split("\n"))
+            {
+                int pad = lines[0].Length - messageLine.Length;
+                if (pad > 0) Console.WriteLine(messageLine.PadRight(pad));
+                else Console.WriteLine(messageLine);
+            }
+        }
 
         for (int j = 0; j < lines.Length; j += skipNthLine)
         {
             string line = lines[j];
-           // line =  line.Replace(" ", "█").Replace("░", "▓").Replace("▓", "░").Replace("█", " ");
+            // line =  line.Replace(" ", "█").Replace("░", "▓").Replace("▓", "░").Replace("█", " ");
             Console.WriteLine(line);
         }
+
         Thread.Sleep(_frameMS);
     }
 
