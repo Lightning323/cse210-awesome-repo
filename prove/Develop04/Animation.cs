@@ -36,12 +36,12 @@ public class Animation
     public void Play(int seconds, string message, bool showProgressBar)
     {
         Console.CursorVisible = false;
-        Console.Clear();
         Console.WriteLine();
-        var cursorPosition = Console.GetCursorPosition();
         DateTime endTime = DateTime.Now.AddSeconds(seconds);
         while (true)
         {
+            Console.Clear();
+            var cursorPosition = Console.GetCursorPosition();
             for (int f = 0; f < _animation.Length; f++)
             {
                 int timeLeftMS = (int)(endTime - DateTime.Now).TotalMilliseconds;
@@ -91,8 +91,8 @@ public class Animation
             foreach (string messageLine in message.Split("\n"))
             {
                 int pad = lines[0].Length - messageLine.Length;
-                if (pad > 0) Console.WriteLine(messageLine.PadRight(pad));
-                else Console.WriteLine(messageLine);
+                if (pad > 0) Console.WriteLine($"\u001b[1m{messageLine.PadRight(pad)}\u001b[0m");
+                else Console.WriteLine($"\u001b[1m{messageLine}\u001b[0m");
             }
         }
 
