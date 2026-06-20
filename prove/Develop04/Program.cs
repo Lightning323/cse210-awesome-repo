@@ -3,7 +3,6 @@ using Develop04;
 
 class Program
 {
-
     static int askForTime()
     {
         Console.Write("How long, in seconds, would you like for your session? ");
@@ -12,11 +11,23 @@ class Program
 
     static void Main(string[] args)
     {
-      
+        string[] decorations = new string[]
+        {
+            "*-*-*-*-*-*-*-*-*-*-*-*-",
+            "⟾ ⟽ ⟾ ⟽ ⟾ ⟽ ⟾ ⟽ ⟾ ⟽ ⟾",
+            "========================",
+            "🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷",
+            "<><><><><><><><><><><><>",
+            "@|@|@|@|@|@|@|@|@|@|@|@",
+            " ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪ ✪"
+        };
+        Random random = new Random();
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("\n\n*-*-*-*-*-*-*-*-*-*-*-*-\nRELAXATION TIMER\n*-*-*-*-*-*-*-*-*-*-*-*-" +
+            string decoration = decorations[random.Next(decorations.Length)];
+            Console.WriteLine($"\n\n{decoration}\nRELAXATION TIMER\n{decoration}" +
+                              "\nChoose an activity to perform, or press Q to quit:" +
                               "\n1. Breathing exercise" +
                               "\n2. Listing exercise" +
                               "\n3. Reflection exercise" +
