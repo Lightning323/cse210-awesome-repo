@@ -1,4 +1,4 @@
-namespace Develop05;
+namespace Develop03;
 
 public class Scripture
 {
