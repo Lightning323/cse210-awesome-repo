@@ -1,6 +1,31 @@
 using System;
 using GoalsProgram;
 
+
+/*
+ *
+ *
+ *
+ *
+ *
+ * 
+ * CREATIVITY AND EXCEEDING REQUIREMENTS:
+ * 
+ * 1. Persistent Storage Automation: Eliminated manual file management by loading on program start and by saving
+ * whenever a new goal is added or marked off. The application seamlessly maintains state in a local file without
+ * requiring user intervention.
+ *
+ * other stuff:
+ * 2. Clear screen upon some menus for cleaner user experience
+ * 3. You can mark off multiple events without having to enter into menu 5 every time.
+ * 4. Enhanced prompting, with better error handling.
+ *
+ *
+ *
+ *
+ *
+ * 
+ */
 class Program
 {
     private static GoalManager goals = new GoalManager();
@@ -88,7 +113,7 @@ class Program
     {
         while (true)
         {
-            Console.Write(prompt+": ");
+            Console.Write(prompt.Trim()+": ");
             string input = Console.ReadLine()?.Trim();
 
             if (!string.IsNullOrEmpty(input))
@@ -105,7 +130,7 @@ class Program
     {
         while (true)
         {
-            Console.Write(prompt+": ");
+            Console.Write(prompt.Trim()+": ");
             string input = Console.ReadLine();
 
             if (int.TryParse(input, out int result))
@@ -121,7 +146,7 @@ class Program
     {
         while (true)
         {
-            Console.Write(prompt+": ");
+            Console.Write(prompt.Trim()+": ");
             string input = Console.ReadLine();
 
             if (int.TryParse(input, out int result))
