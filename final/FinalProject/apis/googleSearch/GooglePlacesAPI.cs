@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-public class GooglePlacesService
+public class GooglePlacesAPI
 {
     private static readonly HttpClient client = new HttpClient();
 
