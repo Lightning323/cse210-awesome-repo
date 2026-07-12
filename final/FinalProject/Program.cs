@@ -7,13 +7,13 @@ using FinalProject;
  * - Event parsing, We can convert a string date into a list of DateTime ranges for each event
  *
  * What is written but not working (Current Bugs/Issues):
- * - None that I can find
+ * - Determining if an event is appropriate for a date or social event using Google Places API
  *
  * What remains to be completed:
  * - Google calendar integration for retrieval of events and (possibly) adding events to calendar
  * - Scraping of events from other sources other than google, such as BYUI's own event calendar
  * - Better terminal interface, with colors and stuff for more human readable output
- * - Determining if an event is appropriate for a date or social event using Google Places API
+ * 
  */
 class Program
 {
@@ -21,7 +21,7 @@ class Program
     
     private static Config config;
 
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         Console.WriteLine("=============================================");
         Console.WriteLine("=========== Event Ideas Generator ===========");
@@ -41,7 +41,11 @@ class Program
         {
             Console.WriteLine(e.ToString());
         }
-
+        
+       //  GooglePlacesService googlePlacesService = new GooglePlacesService();
+       // string details = await googlePlacesService.GetPlaceDetailsAsync(events[0]._googlePlaceID, config.GoogleCloudApiKey);
+       // Console.WriteLine(details);
+       //
         // DateTime time = TimeUtils.StringToDateTime("ding dong");
         // Console.WriteLine(time.ToString(TimeUtils.DATE_FORMAT));
     }

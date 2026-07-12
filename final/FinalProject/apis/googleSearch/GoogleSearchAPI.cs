@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace FinalProject;
 
 using System;
@@ -14,6 +16,21 @@ public class GoogleSearchAPI
         _apiKey = apiKey;
     }
 
+    private static string ExtractCid(string venueLink)
+    {
+        if (string.IsNullOrEmpty(venueLink)) return null;
+        // Matches 'ludocid=' and captures all trailing numbers until a boundary/ampersand
+        string pattern = @"\bludocid=(\d+)";
+        Match match = Regex.Match(venueLink, pattern);
+
+        if (match.Success)
+        {
+            return match.Groups[1].Value;
+        }
+
+        return null; // Return null or an empty string if no CID was found
+    }
+
     public List<Event> SearchEvents(string searchQuery = "Events in my location", int results = 20)
     {
         List<Event> eventsRet = new List<Event>();
@@ -21,7 +38,7 @@ public class GoogleSearchAPI
         ht.Add("engine", "google_events");
         ht.Add("q", searchQuery);
         ht.Add("google_domain", "google.com");
-      
+
         ht.Add("hl", "en");
         ht.Add("gl", "us");
         ht.Add("location", "United States");
@@ -36,6 +53,7 @@ public class GoogleSearchAPI
             {
                 cacheFilename = cacheFilename.Replace(c, '_');
             }
+
             if (File.Exists(cacheFilename))
             {
                 Console.WriteLine($"Using cached results for \"{searchQuery}\"");
@@ -49,7 +67,7 @@ public class GoogleSearchAPI
                 data = search.GetJson();
                 File.WriteAllText(cacheFilename, data.ToString());
             }
-            
+
             if (data.ContainsKey("events_results"))
             {
                 JArray events = (JArray)data["events_results"];
@@ -69,7 +87,11 @@ public class GoogleSearchAPI
                     string? whenString = when?.ToString();
                     List<TimeUtils.DateTimeRange> whenRanges = TimeUtils.StringToDateTimeRanges(whenString);
 
-                    eventsRet.Add(new Event(title, description, fullAddress, link, whenRanges));
+                    JObject venue = (JObject)e["venue"];
+
+                    string venueLink = (string)venue["link"];
+                    string googlePlaceID = ExtractCid(venueLink);
+                    eventsRet.Add(new Event(googlePlaceID, title, description, fullAddress, link, whenRanges));
                 }
             }
         }

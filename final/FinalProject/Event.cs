@@ -7,12 +7,14 @@ public class Event
     private List<TimeUtils.DateTimeRange> _eventDateTimes;
     private string _eventDescription;
     private string _eventLocation;
+    public string _googlePlaceID;
 
     public Event()
     {
     }
 
     public Event(
+        string googlePlaceID, 
         string eventName,
         string eventDescription,
         string eventLocation,
@@ -20,6 +22,7 @@ public class Event
         List<TimeUtils.DateTimeRange> eventDateTimes
     )
     {
+        this._googlePlaceID = googlePlaceID;
         this._eventName = eventName;
         this._eventDateTimes = eventDateTimes;
         this._eventDescription = eventDescription;
@@ -29,7 +32,7 @@ public class Event
 
     public string ToString()
     {
-        string ret = "EVENT: " + _eventName + "\n" + _eventDescription + "\n" + _eventLink + "\n" + _eventLocation + "\n";
+        string ret = $"EVENT ({_googlePlaceID}): " + _eventName + "\n" + _eventDescription + "\n" + _eventLink + "\n" + _eventLocation + "\n";
         foreach (var whenRange in _eventDateTimes)
         {
             ret += whenRange.start.ToString(TimeUtils.DATE_FORMAT)+" - "+whenRange.end.ToString(TimeUtils.DATE_FORMAT) + "\n";

@@ -25,6 +25,7 @@ public class Config
     }
 
     private string _serpApiKey = "";
+    private string _googleCloudApiKey = "";
 
     //This is a property, yes I know what you are thinking, but It HAS TO BE THIS WAY
     //otherwise JsonSerializer will not write the property to the config file!
@@ -33,5 +34,11 @@ public class Config
     {
         get { return _serpApiKey; }
         set { _serpApiKey = value; }
+    }
+    
+    public string GoogleCloudApiKey
+    {
+        get { return _googleCloudApiKey; }
+        set { _googleCloudApiKey = value; }
     }
 }
