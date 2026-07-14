@@ -17,6 +17,43 @@ public class GoogleCalendarAPI
             ApplicationName = "YourAppName",
         });
     }
+    
+    public async Task VerifyDataIsMaskedAsync(string calendarId)
+    {
+        if (string.IsNullOrWhiteSpace(calendarId)) throw new ArgumentException("Calendar ID cannot be empty", nameof(calendarId));
+
+        // Configure a request with no time boundaries to scan the entire timeline
+        var request = _service.Events.List(calendarId);
+        request.SingleEvents = true; 
+        request.MaxResults = 2500; // Grab a massive batch to inspect history and future entries
+
+        Console.WriteLine("Scanning all historical and future calendar entries for data leaks...");
+        Events allEvents = await request.ExecuteAsync();
+
+        // Pass the fetched items into the original validation method
+        VerifyDataIsMasked(allEvents.Items);
+    }
+    
+    public void VerifyDataIsMasked(IList<Event> events)
+    {
+        if (events == null) return;
+
+        foreach (var eventItem in events)
+        {
+            if (!string.IsNullOrWhiteSpace(eventItem.Location))
+            {
+                throw new UnauthorizedAccessException($"⚠️⚠️⚠️ Security Breach: Private location details leaked! Found: '{eventItem.Location}'");
+            }
+            if (!string.IsNullOrWhiteSpace(eventItem.Description))
+            {
+                throw new UnauthorizedAccessException($"⚠️⚠️⚠️ Security Breach: Private description details leaked! Found: '{eventItem.Description.Replace("\n", " ")}'");
+            }
+            if (!string.IsNullOrWhiteSpace(eventItem.Summary))
+            {
+                throw new UnauthorizedAccessException($"⚠️️️️️️️️️️️️️⚠️⚠️ Security Breach: Private event titles are visible! Found summary: '{eventItem.Summary.Replace("\n", " ")}'");
+            }
+        }
+    }
 
 
     public async Task getEventsWithinRange(string calendarId, DateTime start, DateTime end)

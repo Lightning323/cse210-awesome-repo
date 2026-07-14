@@ -33,6 +33,7 @@ class Program
         Console.WriteLine();
         
         GoogleCalendarAPI calendarApi = new GoogleCalendarAPI(config.GoogleCalendarApiKey);
+        await calendarApi.VerifyDataIsMaskedAsync("sam.p.w524@gmail.com");
         await calendarApi.getEventsWithinRange("sam.p.w524@gmail.com", DateTime.Now, DateTime.Now.AddDays(1));
       
 
