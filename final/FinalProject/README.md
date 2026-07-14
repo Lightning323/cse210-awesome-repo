@@ -18,6 +18,12 @@ Requires you to setup billing, You stay within the free tier if you limit reques
 ### Setup an API key with your google calendar
 https://console.cloud.google.com/?pli=1
 
+1. Open google calendar
+2. Click calendar options (3 dots) and select "Settings & Sharing"
+3. ![img.png](img.png)
+   4. Make SURE "see only free/busy (hide detail)" is selected
+   5. Setting this option prevents strangers from seeing your events details, location, and description
+5. The Calendar ID will be available on the same page, that is the calendarId you need to use in the config
 
 ## My events arent showing summary / description / location
 
