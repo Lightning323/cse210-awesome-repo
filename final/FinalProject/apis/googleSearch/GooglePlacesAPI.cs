@@ -22,7 +22,7 @@ public class GooglePlacesAPI
         request.Headers.Add("X-Goog-FieldMask", "places.displayName,places.primaryType,places.types,places.priceLevel,places.rating,places.goodForGroups,places.liveMusic,places.outdoorSeating,places.servesWine,places.servesCocktails");
 
         // 2. Pass the CID directly into the text search query JSON body
-        var requestBody = new { query = $"cid:{cid}" };
+        var requestBody = new { textQuery = $"cid:{cid}" };
         request.Content = JsonContent.Create(requestBody);
 
         try
