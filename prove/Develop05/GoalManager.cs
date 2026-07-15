@@ -19,9 +19,10 @@ public class GoalManager
             Console.WriteLine("No goals set.");
             return;
         }
+
         foreach (Goal goal in _goals)
         {
-            Console.WriteLine(i+") \t"+goal.ToString());
+            Console.WriteLine(i + ") \t" + goal.ToString());
             i++;
         }
     }
@@ -29,7 +30,7 @@ public class GoalManager
     public void AddGoal(Goal goal)
     {
         _goals.Add(goal);
-        Console.WriteLine("Goal added: \""+goal.GetShortName()+"\" ("+goal.GetDescription()+")");
+        Console.WriteLine("Goal added: \"" + goal.GetShortName() + "\" (" + goal.GetDescription() + ")");
         save(); //We SHOULD save goals after adding a new one
     }
 
@@ -54,16 +55,24 @@ public class GoalManager
         {
             goal.writeRepresentation(writer);
         }
+
         writer.Close();
         // string fullPath = Path.GetFullPath(filename);
         // Console.WriteLine($"DEBUG: The file is being saved at: {fullPath}");
     }
-    
-    
+
+
     public void load()
     {
         _goals.Clear();
         string filename = "goals.txt";
+        
+        //ADDED: Bugfix to satisfy grade requirements
+        if (!File.Exists(filename)) return;
+        
+        string fullPath = Path.GetFullPath(filename);
+        Console.WriteLine($"Loading from: {fullPath}");
+
         StreamReader reader = new StreamReader(filename);
 
         bool pointsLoaded = false;
@@ -76,6 +85,7 @@ public class GoalManager
                 pointsLoaded = true;
                 continue;
             }
+
             string[] columns = line.Split("|");
             if (columns[0] == "EternalGoal")
             {
@@ -90,6 +100,7 @@ public class GoalManager
                 _goals.Add(new ChecklistGoal(line));
             }
         }
+
         reader.Close();
     }
 
