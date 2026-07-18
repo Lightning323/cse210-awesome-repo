@@ -9,6 +9,7 @@ public class TimeUtils
 {
     public const string CULTURE = Culture.English;
     public const string DATE_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
+    public const string DAY_ONLY_FORMAT = "yyyy-MM-dd";
 
     public static DateTime? StringToDateTime(string dateTimeString)
     {
@@ -41,6 +42,22 @@ public class TimeUtils
         }
 
         return null;
+    }
+    
+    public static string GetRelativeDateString(DateTime targetDate)
+    {
+        // Clear out the time component to focus strictly on calendar days
+        DateTime today = DateTime.Today;
+        int daysDiff = (targetDate.Date - today).Days;
+
+        return daysDiff switch
+        {
+            0 => "Today",
+            1 => "Tomorrow",
+            -1 => "Yesterday",
+            > 1 => $"{daysDiff} days from today",
+            _ => $"{Math.Abs(daysDiff)} days ago"
+        };
     }
 
     public record DateTimeRange(DateTime start, DateTime end);

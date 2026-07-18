@@ -1,3 +1,6 @@
+using System.Collections;
+using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
+
 namespace FinalProject.apis.googleCalendar;
 
 using Google.Apis.Calendar.v3;
@@ -17,14 +20,15 @@ public class GoogleCalendarAPI
             ApplicationName = "YourAppName",
         });
     }
-    
-    public async Task VerifyDataIsMaskedAsync(string calendarId)
+
+    public async Task VerifyDataPrivacy(string calendarId)
     {
-        if (string.IsNullOrWhiteSpace(calendarId)) throw new ArgumentException("Calendar ID cannot be empty", nameof(calendarId));
+        if (string.IsNullOrWhiteSpace(calendarId))
+            throw new ArgumentException("Calendar ID cannot be empty", nameof(calendarId));
 
         // Configure a request with no time boundaries to scan the entire timeline
         var request = _service.Events.List(calendarId);
-        request.SingleEvents = true; 
+        request.SingleEvents = true;
         request.MaxResults = 2500; // Grab a massive batch to inspect history and future entries
 
         Console.WriteLine("Scanning all historical and future calendar entries for data leaks...");
@@ -33,30 +37,46 @@ public class GoogleCalendarAPI
         // Pass the fetched items into the original validation method
         VerifyDataIsMasked(allEvents.Items);
     }
-    
-    public void VerifyDataIsMasked(IList<Event> events)
+
+    private int VerifyDataIsMasked(IList<Event> events)
     {
-        if (events == null) return;
+        int breach = 0;
+        if (events == null) return 0;
 
         foreach (var eventItem in events)
         {
+            if (breach > 100) return breach;
             if (!string.IsNullOrWhiteSpace(eventItem.Location))
             {
-                throw new UnauthorizedAccessException($"⚠️⚠️⚠️ Security Breach: Private location details leaked! Found: '{eventItem.Location}'");
+                breach++;
+                Console.WriteLine($"- Private location details leaked! Found: '{eventItem.Location}'");
             }
+
             if (!string.IsNullOrWhiteSpace(eventItem.Description))
             {
-                throw new UnauthorizedAccessException($"⚠️⚠️⚠️ Security Breach: Private description details leaked! Found: '{eventItem.Description.Replace("\n", " ")}'");
+                breach++;
+                string d = eventItem.Description.Replace("\n", " ");
+                if (d.Length > 100)
+                {
+                    d = d.Substring(0, 100) + "...";
+                }
+                Console.WriteLine(
+                    $"- Private description details leaked! Found: '{d}'");
             }
+
             if (!string.IsNullOrWhiteSpace(eventItem.Summary))
             {
-                throw new UnauthorizedAccessException($"⚠️️️️️️️️️️️️️⚠️⚠️ Security Breach: Private event titles are visible! Found summary: '{eventItem.Summary.Replace("\n", " ")}'");
+                breach++;
+                Console.WriteLine(
+                    $"- Private event titles are visible! Found summary: '{eventItem.Summary.Replace("\n", " ")}'");
             }
         }
+
+        return breach;
     }
 
 
-    public async Task getEventsWithinRange(string calendarId, DateTime start, DateTime end)
+    public async Task<List<TimeUtils.DateTimeRange>> getEventsWithinRange(string calendarId, DateTime start, DateTime end)
     {
         var request = _service.Events.List(calendarId);
         request.TimeMin = start;
@@ -64,16 +84,15 @@ public class GoogleCalendarAPI
         request.SingleEvents = true; // Expands recurring events into individual instances
         request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
+        List<TimeUtils.DateTimeRange> ret = new List<TimeUtils.DateTimeRange>();
         try
         {
-            Console.WriteLine("Fetching today's events...");
             Events events = await request.ExecuteAsync();
 
             if (events.Items != null && events.Items.Count > 0)
             {
                 foreach (var eventItem in events.Items)
                 {
-
                     DateTime? finalStart = null;
                     DateTime? finalEnd = null;
 
@@ -109,7 +128,7 @@ public class GoogleCalendarAPI
                     }
 
                     // 5. Print it cleanly
-                    Console.WriteLine($"- {finalStart.Value.ToString(TimeUtils.DATE_FORMAT)} - {finalEnd.Value.ToString(TimeUtils.DATE_FORMAT)}");
+                    ret.Add(new TimeUtils.DateTimeRange(finalStart.Value, finalEnd.Value));
                 }
             }
             else
@@ -121,6 +140,7 @@ public class GoogleCalendarAPI
         {
             Console.WriteLine($"Error fetching events: {ex.Message}");
         }
+        return ret;
     }
 
     public async Task getEventsToday(string calendarId)

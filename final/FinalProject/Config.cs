@@ -17,16 +17,21 @@ public class Config
             return config;
         }
 
-        var options = new JsonSerializerOptions
-            { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.Never };
-        string json = JsonSerializer.Serialize(new Config(), options);
-        File.WriteAllText("config.json", json);
+        saveConfig(new Config());
         throw new Exception("Config file not found. Please update config.json at " + Path.GetFullPath(CONFIG_FILEPATH));
     }
 
+    public static void saveConfig(Config config)
+    {
+        var options = new JsonSerializerOptions
+            { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.Never };
+        string json = JsonSerializer.Serialize(config, options);
+        File.WriteAllText("config.json", json);
+    }
+
     private string _serpApiKey = "";
-    private string _googleCloudApiKey = "";
     private string _googleCalendarApiKey = "";
+    private string _googleCalendarId = "";
 
     //This is a property, yes I know what you are thinking, but It HAS TO BE THIS WAY
     //otherwise JsonSerializer will not write the property to the config file!
@@ -37,15 +42,15 @@ public class Config
         set { _serpApiKey = value; }
     }
     
-    public string GoogleCloudApiKey
-    {
-        get { return _googleCloudApiKey; }
-        set { _googleCloudApiKey = value; }
-    }
-    
     public string GoogleCalendarApiKey
     {
         get { return _googleCalendarApiKey; }
         set { _googleCalendarApiKey = value; }
+    }
+
+    public string CalendarId
+    {
+        get { return _googleCalendarId; }
+        set { _googleCalendarId = value; }
     }
 }
