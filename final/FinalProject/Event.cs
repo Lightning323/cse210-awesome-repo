@@ -52,27 +52,88 @@ public class Event
         this._eventLink = eventLink;
     }
 
-    public void printFormatted()
+    public void printFormatted(List<TimeUtils.DateTimeRange> calendarEvents)
     {
-        // Console.BackgroundColor = ConsoleColor.Black;
+        double availability = calculateAvailability(calendarEvents);
+
         Console.ForegroundColor = ConsoleColor.White;
-        Console.BackgroundColor = ConsoleColor.Blue;
-        Console.WriteLine($"EVENT ({_googlePlaceID}): {_eventName.ToUpper()}\u001b[0m");
-        Console.ResetColor();
-        
-        Console.WriteLine($"Ends {TimeUtils.GetRelativeDateString(getLatestDate())} \t({getEarliestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)} - {getLatestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)})");
-        Console.ResetColor();
-        
-        Console.ForegroundColor = ConsoleColor.Gray;
-        Console.WriteLine($"{_eventDescription} \n{_eventLink} \n{_eventLocation} \n");
+        Console.BackgroundColor = availability == 0 ? ConsoleColor.DarkRed : ConsoleColor.DarkGreen;
+        //\u001b[0m resets color 100% of the time
+        string url = _eventLink;
+        string displayText = $" {_eventName.ToUpper()} ";
+        // \u001b[34m sets the text color to Blue before printing the text
+        Console.WriteLine(
+            $"EVENT {_googlePlaceID}:\u001b]8;;{url}\u001b\\\u001b[34m{displayText}\u001b]8;;\u001b\\\u001b[0m");
+
         Console.ResetColor();
 
-        foreach (var whenRange in _eventDateTimes)
+        string ends =
+            $"Ends {TimeUtils.GetRelativeDateString(getLatestDate())} \t({getEarliestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)} - {getLatestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)})";
+
+        if (availability == 0)
         {
-            Console.WriteLine(whenRange.start.ToString(TimeUtils.DATE_FORMAT) + " - " +
-                   whenRange.end.ToString(TimeUtils.DATE_FORMAT));
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Busy;\t " + ends);
+        }
+        else
+        {
+            Console.WriteLine(ends);
         }
 
+        Console.ResetColor();
+
+
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.WriteLine($"{_eventDescription}");
+        Console.ForegroundColor = ConsoleColor.Black;
+        Console.WriteLine($"{_eventLocation}");
+        Console.ResetColor();
+
+
+        int availableTimes = _eventDateTimes.Count;
+
+        foreach (TimeUtils.DateTimeRange eventTr in _eventDateTimes)
+        {
+            string busyLevel = "Available";
+            if (isColliding(calendarEvents, eventTr))
+            {
+                availableTimes--;
+                busyLevel = "Busy";
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+
+
+            Console.WriteLine("\t- " + eventTr.start.ToString(TimeUtils.DATE_FORMAT) + " - " +
+                              eventTr.end.ToString(TimeUtils.DATE_FORMAT) + $"\t ({busyLevel})");
+        }
+
+        Console.ResetColor();
+    }
+
+    private bool isColliding(List<TimeUtils.DateTimeRange> calendarEvents, TimeUtils.DateTimeRange eventTr)
+    {
+        bool hasCollision = calendarEvents.Any(calendarTr =>
+            calendarTr.start < eventTr.end && calendarTr.end > eventTr.start);
+        return hasCollision;
+    }
+
+    public double calculateAvailability(List<TimeUtils.DateTimeRange> calendarEvents)
+    {
+        int availableTimes = 0;
+
+        foreach (TimeUtils.DateTimeRange eventTr in _eventDateTimes)
+        {
+            if (!isColliding(calendarEvents, eventTr))
+            {
+                availableTimes++;
+            }
+        }
+
+        return (double)availableTimes / _eventDateTimes.Count;
     }
 
     public string ToString()

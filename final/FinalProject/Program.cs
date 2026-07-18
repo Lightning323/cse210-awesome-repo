@@ -96,19 +96,21 @@ class Program
         //Get calendar events to determine how busy you are
         List<TimeUtils.DateTimeRange> calendarEvents =
             await calendarApi.getEventsWithinRange(config.CalendarId, DateTime.Now, DateTime.Now.AddDays(1));
-        
+
         //Sort events by earliest start time
         events.Sort((e1, e2) =>
         {
-            return e1.getEarliestDate().CompareTo(e2.getEarliestDate());
+            int a =  e1.getLatestDate().CompareTo(e2.getLatestDate());
+            if (a != 0) return a;
+            return e2.calculateAvailability(calendarEvents).CompareTo(e1.calculateAvailability(calendarEvents));
         });
         //Filter out the events that are in the past
         events = events.Where(e => e.getLatestDate() > DateTime.Now).ToList();
-        
+
         Console.WriteLine($"GOOGLE SEARCH:\n\tYou have {events.Count} possible date ideas:\n\n");
         foreach (Event e in events)
         {
-            e.printFormatted();
+            e.printFormatted(calendarEvents);
             Console.WriteLine("\n");
         }
 
