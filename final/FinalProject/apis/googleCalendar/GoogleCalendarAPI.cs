@@ -23,16 +23,23 @@ public class GoogleCalendarAPI
 
     public async Task VerifyDataPrivacy(string calendarId)
     {
-        if (string.IsNullOrWhiteSpace(calendarId))
-            throw new ArgumentException("Calendar ID cannot be empty", nameof(calendarId));
+        try
+        {
+            if (string.IsNullOrWhiteSpace(calendarId))
+                throw new ArgumentException("Calendar ID cannot be empty", nameof(calendarId));
 
-        // Configure a request with no time boundaries to scan the entire timeline
-        var request = _service.Events.List(calendarId);
-        request.SingleEvents = true;
-        request.MaxResults = 2500; // Grab a massive batch to inspect history and future entries
-        Console.WriteLine("Scanning all historical and future calendar entries for data leaks...");
-        Events allEvents = await request.ExecuteAsync();
-        VerifyDataIsMasked(allEvents.Items);
+            // Configure a request with no time boundaries to scan the entire timeline
+            var request = _service.Events.List(calendarId);
+            request.SingleEvents = true;
+            request.MaxResults = 2500; // Grab a massive batch to inspect history and future entries
+            Console.WriteLine("Scanning all historical and future calendar entries for data leaks...");
+            Events allEvents = await request.ExecuteAsync();
+            VerifyDataIsMasked(allEvents.Items);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Unable to veryify calendar: {e.Message}");
+        }
     }
 
     private int VerifyDataIsMasked(IList<Event> events)

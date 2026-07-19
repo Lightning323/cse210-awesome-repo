@@ -100,12 +100,12 @@ public class GoogleSearchAPI
         return data;
     }
 
-    public List<Event> SearchEvents(string searchQuery = "Events", int maxPages = 3)
+    public List<Event> SearchEvents(string searchQuery = "Events", int maxPages = 10)
     {
         List<Event> eventsRet = new List<Event>();
         for (int i = 0; i < maxPages; i++)
         {
-            Console.WriteLine("Requesting search data, page "+i);
+            Console.WriteLine("Requesting search data, page " + (i+1));
             JObject data = RetrieveSearchData(searchQuery, i);
             if (data.ContainsKey("events_results"))
             {
