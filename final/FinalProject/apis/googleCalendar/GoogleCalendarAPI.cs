@@ -38,7 +38,7 @@ public class GoogleCalendarAPI
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Unable to veryify calendar: {e.Message}");
+            Console.WriteLine($"Unable to verify calendar: {e.Message}");
         }
     }
 
