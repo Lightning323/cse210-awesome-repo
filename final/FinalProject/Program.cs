@@ -26,7 +26,7 @@ class Program
 
     static async Task Main(string[] args)
     {
-        config = Config.loadConfig();
+        config = Config.Load();
         calendarApi = new GoogleCalendarAPI(config.GoogleCalendarApiKey);
         offlineCalendar = new OfflineCalendar();
         while (true)
@@ -34,7 +34,7 @@ class Program
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("=============================================");
-            Console.WriteLine("=========== Event Idea Generator ===========");
+            Console.WriteLine("=========== Event Idea Generator ============");
             Console.WriteLine("=============================================");
             Console.ResetColor();
 
@@ -66,7 +66,6 @@ class Program
         }
     }
 
- 
 
     public static void EnterGoogleCalendarId()
     {
@@ -75,7 +74,7 @@ class Program
         string calendarId = UserInputUtils.AskStr("Enter your Google Calendar ID");
         if (calendarId == null || calendarId.IsWhiteSpace()) return;
         config.CalendarId = calendarId;
-        Config.saveConfig(config);
+        Config.Save(config);
     }
 
     private static async Task VerifyCalendarPrivacy()
@@ -92,49 +91,58 @@ class Program
 
     private static async Task SeeEvents()
     {
-        bool showBusy = UserInputUtils.AskBool("Would you like to show busy events? (Y/n)");
-        if (config.CalendarId == null || config.CalendarId.IsWhiteSpace())
-        {
-            EnterGoogleCalendarId();
-            return;
-        }
-
+        bool useCalendar = UserInputUtils.AskBool("Would you like to use your calendar? (Y/n)");
+        bool showBusy = true;
+        if (useCalendar) showBusy = UserInputUtils.AskBool("Would you like to show busy events? (Y/n)");
+        
+        List<TimeUtils.DateTimeRange> calendarEvents = null;
         //Get events using google search API
         GoogleSearchAPI googleSearchApi = new GoogleSearchAPI(config.SerpApiKey);
         List<Event> events =
             googleSearchApi.SearchEvents();
 
 
-        //Get calendar events to determine how busy you are
-        Console.WriteLine($"\n\nFetching calendar events from {config.CalendarId}...");
-        List<TimeUtils.DateTimeRange> calendarEvents =
-            await calendarApi.getEventsWithinRange(config.CalendarId, DateTime.Now, DateTime.Now.AddDays(30));
+        if (useCalendar)
+        {
+            if (config.CalendarId == null || config.CalendarId.IsWhiteSpace())
+            {
+                EnterGoogleCalendarId();
+                return;
+            }
+
+            //Get calendar events to determine how busy you are
+            Console.WriteLine($"\n\nFetching calendar events from {config.CalendarId}...");
+            calendarEvents =
+                await calendarApi.getEventsWithinRange(config.CalendarId, DateTime.Now, DateTime.Now.AddDays(30));
+        }
+
 
         //Sort events by earliest start time
         events.Sort((e1, e2) =>
         {
-            int a = e1.getLatestDate().CompareTo(e2.getLatestDate());
+            int a = e1.GetLatestDate().CompareTo(e2.GetLatestDate());
             if (a != 0) return a;
-            return e2.calculateAvailability(calendarEvents).CompareTo(e1.calculateAvailability(calendarEvents));
+            return e2.CalculateAvailability(calendarEvents).CompareTo(e1.CalculateAvailability(calendarEvents));
         });
         //Filter out the events that are in the past or busy
-        events = events.Where(e => e.getLatestDate() > DateTime.Now).ToList();
+        events = events.Where(e => e.GetLatestDate() > DateTime.Now).ToList();
         if (!showBusy)
         {
-            events = events.Where(e => e.calculateAvailability(calendarEvents) > 0).ToList();
+            events = events.Where(e => e.CalculateAvailability(calendarEvents) > 0).ToList();
         }
 
         Console.WriteLine($"GOOGLE SEARCH:\n\tYou have {events.Count} possible date ideas:\n\n");
         int i = 1;
         foreach (Event e in events)
         {
-            e.printFormatted(calendarEvents, i);
-            
+            e.PrintFormatted(calendarEvents, i);
+
             i++;
         }
 
         //Its a huge pain trying to get google to successfully add events, because its requires a client ID, and whatnot
         //to be registered in google cloud, alongside everything else this project requires
+        HashSet<int> added = new HashSet<int>();
         while (true)
         {
             int add = UserInputUtils.AskInt(
@@ -142,10 +150,20 @@ class Program
             if (add == 0) break;
             else
             {
-              
-                offlineCalendar.AddEvent(events[add - 1]);
-                offlineCalendar.SaveEvents();
-                System.Console.WriteLine($"\"{events[add - 1]._eventName}\" was added to your Offline Calendar...");
+                int index = add - 1;
+                if (added.Contains(index))
+                {
+                    Console.WriteLine(
+                        $"\"{events[index]._eventName}\" was already added to your Offline Calendar...");
+                }
+                else
+                {
+                    offlineCalendar.AddEvent(events[index]);
+                    offlineCalendar.Save();
+                    System.Console.WriteLine(
+                        $"\"{events[index]._eventName}\" was added to your Offline Calendar...");
+                    added.Add(index);
+                }
                 // await calendarApi.AddEvent(config.CalendarId,
                 //     events[add - 1]._eventDescription,
                 //     events[add - 1]._eventLocation,

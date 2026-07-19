@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public class GooglePlacesAPI
 {
-    private static readonly HttpClient client = new HttpClient();
+    private static readonly HttpClient _client = new HttpClient();
 
     public async Task<string> GetPlaceDetailsAsync(string cid, string apiKey)
     {
@@ -27,7 +27,7 @@ public class GooglePlacesAPI
 
         try
         {
-            HttpResponseMessage response = await client.SendAsync(request);
+            HttpResponseMessage response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode(); 
 
             string jsonResponse = await response.Content.ReadAsStringAsync();

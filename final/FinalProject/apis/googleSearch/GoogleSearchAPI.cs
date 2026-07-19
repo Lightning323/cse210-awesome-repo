@@ -32,7 +32,7 @@ public class GoogleSearchAPI
         return null; // Return null or an empty string if no CID was found
     }
 
-    public JObject retrieveSearchData(string searchQuery = "Events", int index = 0)
+    public JObject RetrieveSearchData(string searchQuery = "Events", int index = 0)
     {
         //We cache the results to avoid making too many requests
         JObject data = null;
@@ -106,7 +106,7 @@ public class GoogleSearchAPI
         for (int i = 0; i < maxPages; i++)
         {
             Console.WriteLine("Requesting search data, page "+i);
-            JObject data = retrieveSearchData(searchQuery, i);
+            JObject data = RetrieveSearchData(searchQuery, i);
             if (data.ContainsKey("events_results"))
             {
                 JArray events = (JArray)data["events_results"];

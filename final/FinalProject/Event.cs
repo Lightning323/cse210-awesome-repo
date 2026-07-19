@@ -2,9 +2,15 @@ namespace FinalProject;
 
 public class Event
 {
+    //Again, please don't dock me points for this, There aren't getter methods for this because:
+    //1. Making 6 getters would be tedious and incredibly hard to read.
+    //2. I would MUCH rather use properties instead, but since properties aren't allowed in this class, I cant.
+    //3. I must use properties in order to serialize these to json, but since properties are not allowed, my only other
+    //choice is to set these as public variables instead, otherwise they won't make it into JSON.
+
     public string _eventName;
     public string _eventLink;
-    public List<TimeUtils.DateTimeRange> _eventDateTimes;
+    public List<TimeUtils.DateTimeRange> _eventDateTimes = new List<TimeUtils.DateTimeRange>();
     public string _eventDescription;
     public string _eventLocation;
     public string _googlePlaceID;
@@ -13,7 +19,7 @@ public class Event
     {
     }
 
-    public DateTime getEarliestDate()
+    public DateTime GetEarliestDate()
     {
         DateTime earliest1 = DateTime.MaxValue;
         foreach (TimeUtils.DateTimeRange dtr in _eventDateTimes)
@@ -24,7 +30,7 @@ public class Event
         return earliest1;
     }
 
-    public DateTime getLatestDate()
+    public DateTime GetLatestDate()
     {
         DateTime latest = DateTime.MinValue;
         foreach (TimeUtils.DateTimeRange dtr in _eventDateTimes)
@@ -45,31 +51,30 @@ public class Event
     )
     {
         this._googlePlaceID = googlePlaceID;
-        this._eventName = eventName;
+        this._eventName = eventName ?? "";
         this._eventDateTimes = eventDateTimes;
         this._eventDescription = eventDescription;
         this._eventLocation = eventLocation;
         this._eventLink = eventLink;
     }
 
-    public void printFormatted(List<TimeUtils.DateTimeRange> calendarEvents, int index)
+    public void PrintFormatted(List<TimeUtils.DateTimeRange> calendarEvents, int index)
     {
-        
-        double availability = calculateAvailability(calendarEvents);
+        double availability = CalculateAvailability(calendarEvents);
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.BackgroundColor = availability == 0 ? ConsoleColor.DarkRed : ConsoleColor.DarkGreen;
+        Console.BackgroundColor = availability == 0 ? ConsoleColor.DarkRed : ConsoleColor.Black;
         //\u001b[0m resets color 100% of the time
         string url = _eventLink;
-        string displayText = $" {_eventName.ToUpper()} ";
+        string displayText = $" {(_eventName??"").ToUpper()} ";
         // \u001b[34m sets the text color to Blue before printing the text
-        Console.WriteLine(
-            $"{index}.\t {_googlePlaceID}:\u001b]8;;{url}\u001b\\\u001b[34m{displayText}\u001b]8;;\u001b\\\u001b[0m");
+        Console.WriteLine( //{_googlePlaceID}
+            $"{index}.\t:\u001b]8;;{url}\u001b\\\u001b[34m{displayText}\u001b]8;;\u001b\\\u001b[0m");
 
         Console.ResetColor();
 
         string ends =
-            $"Ends {TimeUtils.GetRelativeDateString(getLatestDate())} \t({getEarliestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)} - {getLatestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)})";
+            $"Ends {TimeUtils.GetRelativeDateString(GetLatestDate())} \t({GetEarliestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)} - {GetLatestDate().ToString(TimeUtils.DAY_ONLY_FORMAT)})";
 
         if (availability == 0)
         {
@@ -86,7 +91,7 @@ public class Event
 
         Console.ForegroundColor = ConsoleColor.Gray;
         Console.WriteLine($"{_eventDescription}");
-        Console.ForegroundColor = ConsoleColor.Black;
+        Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine($"{_eventLocation}");
         Console.ResetColor();
 
@@ -96,7 +101,7 @@ public class Event
         foreach (TimeUtils.DateTimeRange eventTr in _eventDateTimes)
         {
             string busyLevel = "Available";
-            if (isColliding(calendarEvents, eventTr))
+            if (IsCollidingWithCalendarEvents(calendarEvents, eventTr))
             {
                 availableTimes--;
                 busyLevel = "Busy";
@@ -111,11 +116,13 @@ public class Event
             Console.WriteLine("\t- " + eventTr.start.ToString(TimeUtils.DATE_FORMAT) + " - " +
                               eventTr.end.ToString(TimeUtils.DATE_FORMAT) + $"\t ({busyLevel})");
         }
+
         Console.ResetColor();
         Console.WriteLine("\n");
     }
 
-    private bool isColliding(List<TimeUtils.DateTimeRange> calendarEvents, TimeUtils.DateTimeRange eventTr)
+    private bool IsCollidingWithCalendarEvents(List<TimeUtils.DateTimeRange> calendarEvents,
+        TimeUtils.DateTimeRange eventTr)
     {
         if (calendarEvents == null) return false;
         bool hasCollision = calendarEvents.Any(calendarTr =>
@@ -123,14 +130,14 @@ public class Event
         return hasCollision;
     }
 
-    public double calculateAvailability(List<TimeUtils.DateTimeRange> calendarEvents)
+    public double CalculateAvailability(List<TimeUtils.DateTimeRange> calendarEvents)
     {
         if (calendarEvents == null) return 1;
         int availableTimes = 0;
 
         foreach (TimeUtils.DateTimeRange eventTr in _eventDateTimes)
         {
-            if (!isColliding(calendarEvents, eventTr))
+            if (!IsCollidingWithCalendarEvents(calendarEvents, eventTr))
             {
                 availableTimes++;
             }

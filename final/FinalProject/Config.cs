@@ -8,7 +8,7 @@ public class Config
 {
     private const string CONFIG_FILEPATH = "config.json";
 
-    public static Config loadConfig()
+    public static Config Load()
     {
         Console.WriteLine($"Loading config... {Path.GetFullPath(CONFIG_FILEPATH)}");
         if (File.Exists(CONFIG_FILEPATH))
@@ -18,11 +18,11 @@ public class Config
             return config;
         }
 
-        saveConfig(new Config());
+        Save(new Config());
         throw new Exception("Config file not found. Please update config.json at " + Path.GetFullPath(CONFIG_FILEPATH));
     }
 
-    public static void saveConfig(Config config)
+    public static void Save(Config config)
     {
         var options = new JsonSerializerOptions
             { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.Never };
