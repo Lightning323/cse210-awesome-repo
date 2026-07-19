@@ -11,8 +11,9 @@ https://serpapi.com/dashboard
 
 Add the API key to the config.json file
 
-### 2. Setup an API key with your google calendar
+### 2. Setup an API key with google calendar integration
 https://console.cloud.google.com
+https://developers.google.com/workspace/calendar/api/quickstart/go
 
 Add the API key to the config.json file
 
