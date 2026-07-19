@@ -10,6 +10,7 @@ public class Config
 
     public static Config loadConfig()
     {
+        Console.WriteLine($"Loading config... {Path.GetFullPath(CONFIG_FILEPATH)}");
         if (File.Exists(CONFIG_FILEPATH))
         {
             string jsonString = File.ReadAllText(CONFIG_FILEPATH);

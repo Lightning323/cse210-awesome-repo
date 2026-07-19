@@ -2,11 +2,11 @@ namespace FinalProject;
 
 public class Event
 {
-    private string _eventName;
-    private string _eventLink;
+    public string _eventName;
+    public string _eventLink;
     public List<TimeUtils.DateTimeRange> _eventDateTimes;
-    private string _eventDescription;
-    private string _eventLocation;
+    public string _eventDescription;
+    public string _eventLocation;
     public string _googlePlaceID;
 
     public Event()
@@ -52,8 +52,9 @@ public class Event
         this._eventLink = eventLink;
     }
 
-    public void printFormatted(List<TimeUtils.DateTimeRange> calendarEvents)
+    public void printFormatted(List<TimeUtils.DateTimeRange> calendarEvents, int index)
     {
+        
         double availability = calculateAvailability(calendarEvents);
 
         Console.ForegroundColor = ConsoleColor.White;
@@ -63,7 +64,7 @@ public class Event
         string displayText = $" {_eventName.ToUpper()} ";
         // \u001b[34m sets the text color to Blue before printing the text
         Console.WriteLine(
-            $"EVENT {_googlePlaceID}:\u001b]8;;{url}\u001b\\\u001b[34m{displayText}\u001b]8;;\u001b\\\u001b[0m");
+            $"{index}.\t {_googlePlaceID}:\u001b]8;;{url}\u001b\\\u001b[34m{displayText}\u001b]8;;\u001b\\\u001b[0m");
 
         Console.ResetColor();
 
@@ -110,12 +111,13 @@ public class Event
             Console.WriteLine("\t- " + eventTr.start.ToString(TimeUtils.DATE_FORMAT) + " - " +
                               eventTr.end.ToString(TimeUtils.DATE_FORMAT) + $"\t ({busyLevel})");
         }
-
         Console.ResetColor();
+        Console.WriteLine("\n");
     }
 
     private bool isColliding(List<TimeUtils.DateTimeRange> calendarEvents, TimeUtils.DateTimeRange eventTr)
     {
+        if (calendarEvents == null) return false;
         bool hasCollision = calendarEvents.Any(calendarTr =>
             calendarTr.start < eventTr.end && calendarTr.end > eventTr.start);
         return hasCollision;
@@ -123,6 +125,7 @@ public class Event
 
     public double calculateAvailability(List<TimeUtils.DateTimeRange> calendarEvents)
     {
+        if (calendarEvents == null) return 1;
         int availableTimes = 0;
 
         foreach (TimeUtils.DateTimeRange eventTr in _eventDateTimes)

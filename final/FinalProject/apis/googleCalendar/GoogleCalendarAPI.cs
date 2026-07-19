@@ -1,4 +1,5 @@
 using System.Collections;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 
 namespace FinalProject.apis.googleCalendar;
@@ -13,7 +14,6 @@ public class GoogleCalendarAPI
 
     public GoogleCalendarAPI(string apiKey)
     {
-        // 2. Initialize the service using the ApiKey property directly
         this._service = new CalendarService(new BaseClientService.Initializer()
         {
             ApiKey = apiKey,
@@ -30,11 +30,8 @@ public class GoogleCalendarAPI
         var request = _service.Events.List(calendarId);
         request.SingleEvents = true;
         request.MaxResults = 2500; // Grab a massive batch to inspect history and future entries
-
         Console.WriteLine("Scanning all historical and future calendar entries for data leaks...");
         Events allEvents = await request.ExecuteAsync();
-
-        // Pass the fetched items into the original validation method
         VerifyDataIsMasked(allEvents.Items);
     }
 
@@ -60,6 +57,7 @@ public class GoogleCalendarAPI
                 {
                     d = d.Substring(0, 100) + "...";
                 }
+
                 Console.WriteLine(
                     $"- Private description details leaked! Found: '{d}'");
             }
@@ -75,8 +73,38 @@ public class GoogleCalendarAPI
         return breach;
     }
 
+    public async Task AddEvent(string calendarId, string summary, string location, string description, DateTime start,
+        DateTime end)
+    {
+        var service = _service;
 
-    public async Task<List<TimeUtils.DateTimeRange>> getEventsWithinRange(string calendarId, DateTime start, DateTime end)
+        // 1. Build the body payload using Google's Event structure
+        Event newEvent = new Event()
+        {
+            Summary = summary,
+            Location = location,
+            Description = description,
+            Start = new EventDateTime()
+            {
+                // Force ISO 8601 formatting (yyyy-MM-ddTHH:mm:ss)
+                DateTimeDateTimeOffset = start,
+                TimeZone = "America/Boise" // Keep this matched to local event zone
+            },
+            End = new EventDateTime()
+            {
+                DateTimeDateTimeOffset = end,
+                TimeZone = "America/Boise"
+            }
+        };
+        EventsResource.InsertRequest request = service.Events.Insert(newEvent, calendarId);
+        Event createdEvent = await request.ExecuteAsync();
+
+        Console.WriteLine($"Event successfully added! Link: {createdEvent.HtmlLink}");
+    }
+
+
+    public async Task<List<TimeUtils.DateTimeRange>> getEventsWithinRange(string calendarId, DateTime start,
+        DateTime end)
     {
         var request = _service.Events.List(calendarId);
         request.TimeMin = start;
@@ -126,100 +154,19 @@ public class GoogleCalendarAPI
                             }
                         }
                     }
-
-                    // 5. Print it cleanly
                     ret.Add(new TimeUtils.DateTimeRange(finalStart.Value, finalEnd.Value));
                 }
             }
             else
             {
-                Console.WriteLine("No events found for today.");
+                Console.WriteLine("No calendar events found for today.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching events: {ex.Message}");
+            Console.WriteLine($"Error fetching calendar events: {ex.Message}\n\n");
         }
+
         return ret;
-    }
-
-    public async Task getEventsToday(string calendarId)
-    {
-        DateTime startOfToday = DateTime.Today.ToUniversalTime();
-        DateTime endOfToday = DateTime.Today.AddDays(1).AddTicks(-1).ToUniversalTime();
-
-        var request = _service.Events.List(calendarId);
-
-        request.TimeMin = startOfToday; // Filters out anything starting before 12:00 AM today
-        request.TimeMax = endOfToday; // Filters out anything starting after 11:59 PM today
-        request.SingleEvents = true; // Expands recurring events into individual instances
-        request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-
-        try
-        {
-            Console.WriteLine("Fetching today's events...");
-            Events events = await request.ExecuteAsync();
-
-            if (events.Items != null && events.Items.Count > 0)
-            {
-                foreach (var eventItem in events.Items)
-                {
-                    // 1. Get the Event Name (with a fallback if it has no title)
-                    string eventName = eventItem.Summary ?? "Untitled Event";
-
-                    // 2. Format the Start Time/Date
-                    string startDisplay = "Unknown Start";
-                    if (eventItem.Start != null)
-                    {
-                        // If it's a timed event, format it nicely (e.g., "07/13/2026 1:30 PM")
-                        if (eventItem.Start.DateTimeDateTimeOffset.HasValue)
-                        {
-                            startDisplay = eventItem.Start.DateTimeDateTimeOffset.Value.ToString("g");
-                        }
-                        // If it's an all-day event, use the Date string (e.g., "2026-07-13")
-                        else if (!string.IsNullOrEmpty(eventItem.Start.Date))
-                        {
-                            startDisplay = $"{eventItem.Start.Date} (All Day)";
-                        }
-                    }
-
-                    // 3. Format the End Time/Date
-                    string endDisplay = "Unknown End";
-                    if (eventItem.End != null)
-                    {
-                        if (eventItem.End.DateTimeDateTimeOffset.HasValue)
-                        {
-                            endDisplay = eventItem.End.DateTimeDateTimeOffset.Value.ToString("g");
-                        }
-                        else if (!string.IsNullOrEmpty(eventItem.End.Date))
-                        {
-                            endDisplay = eventItem.End.Date;
-                        }
-                    }
-
-                    // 4. Safely get Description and Location (handle null values)
-                    string description = !string.IsNullOrEmpty(eventItem.Description)
-                        ? eventItem.Description
-                        : "No description";
-                    string location = !string.IsNullOrEmpty(eventItem.Location) ? eventItem.Location : "No location";
-
-                    // 5. Print it cleanly
-                    Console.WriteLine($"--------------------------------------------------");
-                    Console.WriteLine($"Event: {eventName}");
-                    Console.WriteLine($"Start: {startDisplay}");
-                    Console.WriteLine($"End:   {endDisplay}");
-                    Console.WriteLine($"Where: {location}");
-                    Console.WriteLine($"Desc:  {description}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No events found for today.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error fetching events: {ex.Message}");
-        }
     }
 }

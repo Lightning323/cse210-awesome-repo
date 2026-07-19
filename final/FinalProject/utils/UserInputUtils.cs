@@ -2,68 +2,28 @@ namespace FinalProject;
 
 public class UserInputUtils
 {
-    public static string inputStr(string input)
+    public static string AskStr(string input)
     {
         Console.Write($"{input}: ");
         return Console.ReadLine();
     }
 
-    public static bool inputBool(string input)
+    public static bool AskBool(string input)
     {
         Console.Write($"{input}: ");
         return Console.ReadLine().Trim().ToLower() == "y";
     }
 
-    public static int inputInt(string input)
+    public static int AskInt(string input, int min, int max)
     {
         Console.Write($"{input}: ");
-        return int.Parse(Console.ReadLine().Trim());
-    }
-
-    public static int inputInt(string input, int min, int max)
-    {
-        Console.Write($"{input}: ");
-        int val = int.Parse(Console.ReadLine().Trim());
+        string va1l = Console.ReadLine().Trim();
+        if (va1l.IsWhiteSpace()) return min;
+        int val = int.Parse(va1l);
         return Math.Clamp(val, min, max);
     }
 
-    public static double inputDouble(string input)
-    {
-        Console.Write($"{input}: ");
-        return double.Parse(Console.ReadLine().Trim());
-    }
-
-    public static long inputLong(string input)
-    {
-        Console.Write($"{input}: ");
-        return long.Parse(Console.ReadLine().Trim());
-    }
-
-    public static float inputFloat(string input)
-    {
-        Console.Write($"{input}: ");
-        return float.Parse(Console.ReadLine().Trim());
-    }
-
-    public static decimal inputDecimal(string input)
-    {
-        Console.Write($"{input}: ");
-        return decimal.Parse(Console.ReadLine().Trim());
-    }
-
-    public static DateTime inputDateTime(string input)
-    {
-        Console.Write($"{input}: ");
-        return DateTime.Parse(Console.ReadLine().Trim());
-    }
-
-    public static TimeSpan inputTimeSpan(string input)
-    {
-        Console.Write($"{input}: ");
-        return TimeSpan.Parse(Console.ReadLine().Trim());
-    }
-
-    public static void anyKey()
+    public static void AnyKey()
     {
         Console.WriteLine("Press any key to continue");
         Console.ReadKey();
